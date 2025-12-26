@@ -1,0 +1,22 @@
+services:
+  app:
+    build:
+      context: .
+    restart: always
+    ports:
+      - "1212:1212"
+    depends_on:
+      - db
+    environment:
+      - DB_POSTGRES_HOST=host.docker.internal
+
+  db:
+    image: "postgres:18"
+    environment:
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=task_pool_system
+    restart: on-failure
+
+volumes:
+  task-pool-system-db:

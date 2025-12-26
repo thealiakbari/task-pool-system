@@ -1,0 +1,22 @@
+mode: local
+service_name: task-pool-system
+language: en
+db:
+  postgres:
+    host: localhost
+    name: task_pool_system
+    port: 5432
+    username: postgres
+    password: postgres
+    driver: postgres
+    ssl: disable
+    appName: task-pool-system
+    migrations_url: file:./cmd/migration/scripts
+    transaction_timeout: 120000
+    max_idle_connection: 10
+    max_open_connection: 10
+    conn_max_lifetime: 120000
+core:
+  http:
+    address: ":1212"
+    port: 1212

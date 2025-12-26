@@ -1,0 +1,256 @@
+basePath: /api/v1
+definitions:
+  dto.CreateTaskRequest:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
+  dto.Task:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      duration:
+        type: integer
+      id:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  dto.UpdateTaskRequest:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    required:
+    - description
+    - title
+    type: object
+  response.ErrSwaggerResponse:
+    properties:
+      meta:
+        properties:
+          causes:
+            items: {}
+            type: array
+          code:
+            type: integer
+          message:
+            type: string
+        type: object
+      payload:
+        additionalProperties: true
+        type: object
+    type: object
+  response.ErrValidationSwaggerResponse:
+    properties:
+      meta:
+        properties:
+          causes:
+            items:
+              properties:
+                field:
+                  type: string
+                message:
+                  type: string
+              type: object
+            type: array
+          code:
+            type: integer
+          message:
+            type: string
+        type: object
+      payload:
+        additionalProperties: true
+        type: object
+    type: object
+info:
+  contact:
+    name: Task Pool Application
+    url: https://swagger.io/support
+  termsOfService: http://swagger.io/terms/
+paths:
+  /tasks:
+    post:
+      consumes:
+      - application/json
+      description: This api for create task
+      parameters:
+      - description: Contains information to set data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrValidationSwaggerResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+      summary: Create Task
+      tags:
+      - Task
+  /tasks/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This api for delete task
+      parameters:
+      - description: Task Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrValidationSwaggerResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+      summary: Delete Task
+      tags:
+      - Task
+    get:
+      consumes:
+      - application/json
+      description: This api for task by id
+      parameters:
+      - description: Task Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrValidationSwaggerResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+      summary: Get Task By Id
+      tags:
+      - Task
+    put:
+      consumes:
+      - application/json
+      description: This api for update task
+      parameters:
+      - description: Task Id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Contains information to set data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateTaskRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrValidationSwaggerResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+      summary: Update Task
+      tags:
+      - Task
+  /tasks/purge/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: This api for purge task
+      parameters:
+      - description: Task Id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ErrValidationSwaggerResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrSwaggerResponse'
+      summary: Purge Task
+      tags:
+      - Task
+securityDefinitions:
+  Bearer:
+    description: '"Type ''Bearer TOKEN'' to correctly set the Authorization Bearer"'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

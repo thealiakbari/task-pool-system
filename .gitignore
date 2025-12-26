@@ -1,0 +1,9 @@
+.DS_Store
+.idea/
+.vscode/
+/bin/
+.env
+.history/
+./deployment/
+./deployment/db/
+./db-data/
