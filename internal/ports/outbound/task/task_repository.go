@@ -15,5 +15,4 @@ type TaskRepository interface {
 	Delete(ctx context.Context, id string) (err error)
 	FilterFind(ctx context.Context, query []any, order string, limit int, offset int) (res []entity.Task, err error)
 	FilterCount(ctx context.Context, query []any) (res int64, err error)
-	FindByPhoneNumberOrEmpty(ctx context.Context, phoneNumber string) (res entity.Task, err error)
 }

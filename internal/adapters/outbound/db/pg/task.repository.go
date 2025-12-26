@@ -99,12 +99,3 @@ func (u TaskConfig) FilterCount(ctx context.Context, query []any) (res int64, er
 
 	return res, nil
 }
-
-func (u TaskConfig) FindByPhoneNumberOrEmpty(ctx context.Context, phoneNumber string) (res entity.Task, err error) {
-	err = db.GormConnection(ctx, u.db.DB).Model(&res).Find(&res, "phone_number = ?", phoneNumber).Limit(1).Error
-	if err != nil {
-		return entity.Task{}, err
-	}
-
-	return res, nil
-}

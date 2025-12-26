@@ -16,24 +16,24 @@ type mockRepo struct {
 	mock.Mock
 }
 
-func (m *mockRepo) Create(ctx context.Context, in entity.User) (entity.User, error) {
+func (m *mockRepo) Create(ctx context.Context, in entity.Task) (entity.Task, error) {
 	args := m.Called(ctx, in)
-	return args.Get(0).(entity.User), args.Error(1)
+	return args.Get(0).(entity.Task), args.Error(1)
 }
 
-func (m *mockRepo) Update(ctx context.Context, in entity.User) error {
+func (m *mockRepo) Update(ctx context.Context, in entity.Task) error {
 	args := m.Called(ctx, in)
 	return args.Error(0)
 }
 
-func (m *mockRepo) FindByIds(ctx context.Context, ids []string) ([]entity.User, error) {
+func (m *mockRepo) FindByIds(ctx context.Context, ids []string) ([]entity.Task, error) {
 	args := m.Called(ctx, ids)
-	return args.Get(0).([]entity.User), args.Error(1)
+	return args.Get(0).([]entity.Task), args.Error(1)
 }
 
-func (m *mockRepo) FindByIdOrEmpty(ctx context.Context, id string) (entity.User, error) {
+func (m *mockRepo) FindByIdOrEmpty(ctx context.Context, id string) (entity.Task, error) {
 	args := m.Called(ctx, id)
-	return args.Get(0).(entity.User), args.Error(1)
+	return args.Get(0).(entity.Task), args.Error(1)
 }
 
 func (m *mockRepo) Purge(ctx context.Context, id string) error {
@@ -46,9 +46,9 @@ func (m *mockRepo) Delete(ctx context.Context, id string) error {
 	return args.Error(0)
 }
 
-func (m *mockRepo) FilterFind(ctx context.Context, query []any, order string, limit int, offset int) ([]entity.User, error) {
+func (m *mockRepo) FilterFind(ctx context.Context, query []any, order string, limit int, offset int) ([]entity.Task, error) {
 	args := m.Called(ctx, query, order, limit, offset)
-	return args.Get(0).([]entity.User), args.Error(1)
+	return args.Get(0).([]entity.Task), args.Error(1)
 }
 
 func (m *mockRepo) FilterCount(ctx context.Context, query []any) (int64, error) {
@@ -61,15 +61,15 @@ func TestCreate_Success(t *testing.T) {
 	repo := new(mockRepo)
 	log, err := logger.New(
 		"local",
-		"otpapp",
-		"otpapp",
+		"taskApp",
+		"taskApp",
 	)
-	service := NewUserService(UserConfig{
+	service := NewTaskService(TaskConfig{
 		Logger:   log,
-		UserRepo: repo,
+		TaskRepo: repo,
 	})
 
-	item := entity.User{Username: "test", PhoneNumber: "+989121111111"}
+	item := entity.Task{Title: "test", Description: "test"}
 	repo.On("Create", ctx, item).Return(item, nil)
 
 	res, err := service.Create(ctx, item)
@@ -83,20 +83,20 @@ func TestCreate_ValidationError(t *testing.T) {
 	repo := new(mockRepo)
 	log, err := logger.New(
 		"local",
-		"otpapp",
-		"otpapp",
+		"taskApp",
+		"taskApp",
 	)
-	service := NewUserService(UserConfig{
+	service := NewTaskService(TaskConfig{
 		Logger:   log,
-		UserRepo: repo,
+		TaskRepo: repo,
 	})
 
-	item := entity.User{}
+	item := entity.Task{}
 
 	res, err := service.Create(ctx, item)
 	assert.Error(t, err)
 	assert.IsType(t, &appErr.Error{}, err)
-	assert.Equal(t, entity.User{}, res)
+	assert.Equal(t, entity.Task{}, res)
 }
 
 func TestCreate_RepoError(t *testing.T) {
@@ -104,21 +104,21 @@ func TestCreate_RepoError(t *testing.T) {
 	repo := new(mockRepo)
 	log, err := logger.New(
 		"local",
-		"otpapp",
-		"otpapp",
+		"taskApp",
+		"taskApp",
 	)
-	service := NewUserService(UserConfig{
+	service := NewTaskService(TaskConfig{
 		Logger:   log,
-		UserRepo: repo,
+		TaskRepo: repo,
 	})
 
-	item := entity.User{Username: "test", PhoneNumber: "989121111111"}
-	repo.On("Create", ctx, item).Return(entity.User{}, errors.New("db error"))
+	item := entity.Task{Title: "test", Description: "test"}
+	repo.On("Create", ctx, item).Return(entity.Task{}, errors.New("db error"))
 
 	res, err := service.Create(ctx, item)
 	assert.Error(t, err)
 	assert.Contains(t, err.Error(), "db error")
-	assert.Equal(t, entity.User{}, res)
+	assert.Equal(t, entity.Task{}, res)
 }
 
 func TestGetByIdOrEmpty_EmptyId(t *testing.T) {
@@ -126,17 +126,17 @@ func TestGetByIdOrEmpty_EmptyId(t *testing.T) {
 	repo := new(mockRepo)
 	log, err := logger.New(
 		"local",
-		"otpapp",
-		"otpapp",
+		"taskApp",
+		"taskApp",
 	)
-	service := NewUserService(UserConfig{
+	service := NewTaskService(TaskConfig{
 		Logger:   log,
-		UserRepo: repo,
+		TaskRepo: repo,
 	})
 
 	res, err := service.GetByIdOrEmpty(ctx, "")
 	assert.Error(t, err)
-	assert.Equal(t, entity.User{}, res)
+	assert.Equal(t, entity.Task{}, res)
 	assert.IsType(t, &appErr.Error{}, err)
 }
 
@@ -145,15 +145,15 @@ func TestGetByIdOrEmpty_Success(t *testing.T) {
 	repo := new(mockRepo)
 	log, err := logger.New(
 		"local",
-		"otpapp",
-		"otpapp",
+		"taskApp",
+		"taskApp",
 	)
-	service := NewUserService(UserConfig{
+	service := NewTaskService(TaskConfig{
 		Logger:   log,
-		UserRepo: repo,
+		TaskRepo: repo,
 	})
 
-	expected := entity.User{Username: "test", PhoneNumber: "989121111111"}
+	expected := entity.Task{Title: "test", Description: "test"}
 	repo.On("FindByIdOrEmpty", ctx, "123").Return(expected, nil)
 
 	res, err := service.GetByIdOrEmpty(ctx, "123")
@@ -166,12 +166,12 @@ func TestDelete_EmptyId(t *testing.T) {
 	repo := new(mockRepo)
 	log, err := logger.New(
 		"local",
-		"otpapp",
-		"otpapp",
+		"taskApp",
+		"taskApp",
 	)
-	service := NewUserService(UserConfig{
+	service := NewTaskService(TaskConfig{
 		Logger:   log,
-		UserRepo: repo,
+		TaskRepo: repo,
 	})
 
 	err = service.Delete(ctx, "")
@@ -184,12 +184,12 @@ func TestDelete_Success(t *testing.T) {
 	repo := new(mockRepo)
 	log, err := logger.New(
 		"local",
-		"otpapp",
-		"otpapp",
+		"taskApp",
+		"taskApp",
 	)
-	service := NewUserService(UserConfig{
+	service := NewTaskService(TaskConfig{
 		Logger:   log,
-		UserRepo: repo,
+		TaskRepo: repo,
 	})
 
 	repo.On("Delete", ctx, "123").Return(nil)
